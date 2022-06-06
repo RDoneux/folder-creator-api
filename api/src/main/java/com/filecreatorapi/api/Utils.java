@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Scanner;
@@ -444,6 +445,17 @@ public class Utils {
             }
         }
         return output;
+    }
+
+    public static String generateReadableDate(Date date) {
+        SimpleDateFormat formatter = new SimpleDateFormat("MM-dd-yyyy");
+        String format = formatter.format(date);
+        return format;
+    }
+    public static String generateReadableDateWithTime(Date date) {
+        SimpleDateFormat formatter = new SimpleDateFormat("MM-dd-yyyy|HH:mm");
+        String format = formatter.format(date);
+        return format;
     }
 
 }

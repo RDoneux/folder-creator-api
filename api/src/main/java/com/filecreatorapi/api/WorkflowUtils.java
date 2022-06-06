@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Scanner;
 
 import org.json.JSONArray;
@@ -68,8 +69,8 @@ public class WorkflowUtils {
 
     public static void addComment(String workFlowLocation, String comment, String user) throws IOException {
         JSONObject courseSettings = Utils.loadJSONObject(workFlowLocation);
-        courseSettings.getJSONArray("comments").put(comment + ":::" + user);
-
+        courseSettings.getJSONArray("comments")
+                .put(comment + ":::" + user + ":::" + Utils.generateReadableDateWithTime(new Date()));
         Utils.writeJSON(courseSettings, workFlowLocation);
     }
 

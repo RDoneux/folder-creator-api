@@ -68,7 +68,7 @@ public class FileGeneratorController {
         Candidate candidates[] = new Candidate[information.length()];
 
         courseDate = reverseDate(course.getString("date"));
-        courseType = Utils.convertToJSONString(course.getJSONObject("courseType").getString("name"));
+        courseType = Utils.convertToJSONString(course.getString("courseType"));
 
         for (int i = 0; i < information.length(); i++) {
             JSONObject targetCandidate = information.getJSONObject(i);
@@ -189,18 +189,6 @@ public class FileGeneratorController {
 
         Utils.writeJSON(fileSettings, courseSettingsFile.getAbsolutePath());
 
-    }
-
-    private String generateReadableDate(Date date) {
-        SimpleDateFormat formatter = new SimpleDateFormat("MM-dd-yyyy");
-        String format = formatter.format(date);
-        return format;
-    }
-
-    private String generateReadableDate(LocalDate date) {
-        SimpleDateFormat formatter = new SimpleDateFormat("MM-dd-yyyy");
-        String format = formatter.format(date);
-        return format;
     }
 
     private void dump(Candidate[] candidates) {
