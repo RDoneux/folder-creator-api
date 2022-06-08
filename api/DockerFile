@@ -1,0 +1,29 @@
+# FROM gradle:4.7.0-jdk8-alpine AS build
+# COPY --chown=gradle:gradle . /home/gradle/src
+# WORKDIR /home/gradle/src
+# RUN gradle build --no-daemon
+
+FROM ubuntu:latest
+USER root
+RUN apt-get update && apt-get install
+
+# FROM openjdk:16-jdk-alpine
+# RUN addgroup -S spring && adduser -S spring -G spring
+# USER spring:spring
+# ARG DEPENDENCY=target/dependency
+# COPY ${DEPENDENCY}/BOOT-INF/lib /app/lib
+# COPY ${DEPENDENCY}/META-INF /app/META-INF
+# COPY ${DEPENDENCY}/BOOT-INF/classes /app
+# ENTRYPOINT ["java","-cp","app:app/lib/*","hello.Application"]
+
+FROM openjdk:16-jdk-alpine
+
+VOLUME /tmp
+ARG JAR_FILE=api/build/libs/*.jar
+COPY ${JAR_FILE} fc.jar ./
+
+ENV SPRING_PROFILES_ACTIVE prod
+
+EXPOSE 8080
+
+ENTRYPOINT ["java","-jar","/fc.jar"]

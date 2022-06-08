@@ -30,4 +30,11 @@ public class WorkflowController {
             @RequestParam("comment") String comment, @RequestParam("user") String user) throws IOException {
         WorkflowUtils.addComment(workFlowLocation, comment, user);
     }
+
+    @CrossOrigin
+    @RequestMapping(method = RequestMethod.POST, path = "/assignee")
+    public void updateAssignee(@RequestParam("username") String username,
+            @RequestParam("coursePath") String coursePath) throws IOException {
+        WorkflowUtils.updateAssignee(username, coursePath);
+    }
 }

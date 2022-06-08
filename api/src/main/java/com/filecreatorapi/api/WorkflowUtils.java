@@ -74,4 +74,10 @@ public class WorkflowUtils {
         Utils.writeJSON(courseSettings, workFlowLocation);
     }
 
+    public static void updateAssignee(String username, String coursePath) throws IOException {
+        JSONObject courseSettings = Utils.loadJSONObject(coursePath);
+        courseSettings.put("assigned", username);
+        Utils.writeJSON(courseSettings, coursePath);
+    }
+
 }

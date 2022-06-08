@@ -17,7 +17,7 @@ import org.json.JSONObject;
 
 public class Utils {
 
-    private static File SETTINGS_FILE = new File("./api/FileGeneratorSettings.json");
+    private static File SETTINGS_FILE = new File("api/api/src/main/FileGeneratorSettings.json");
 
     public static String USERS_FILE_PATH = "api/api/src/main/users";
     public static String CUSTOM_FILES_PATH = "api/api/src/main/customFiles/";
@@ -270,6 +270,7 @@ public class Utils {
 
     private static void createSettingsFile() throws IOException {
 
+        SETTINGS_FILE.getParentFile().mkdirs();
         SETTINGS_FILE.createNewFile();
 
         JSONObject settingsJSON = new JSONObject();

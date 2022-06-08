@@ -8,7 +8,7 @@ public class ApiApplication {
 
 	public static void main(String[] args) {
 		Utils.loadSettings();
-		SpringApplication.run(ApiApplication.class, args);
+		SpringApplication.run(ApiApplication.class);
 	}
 
 }
