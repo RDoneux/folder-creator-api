@@ -80,4 +80,8 @@ public class WorkflowUtils {
         Utils.writeJSON(courseSettings, coursePath);
     }
 
+    public static JSONObject getDocuments(String path) {
+        return Utils.loadJSONObject(path);
+    }
+
 }

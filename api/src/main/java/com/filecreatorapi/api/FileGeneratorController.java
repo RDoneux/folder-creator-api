@@ -133,7 +133,7 @@ public class FileGeneratorController {
         }
 
         try {
-            createCourseJSONSettings(baseFile.getAbsolutePath());
+            createCourseJSONSettings(candidates, baseFile.getAbsolutePath());
         } catch (IOException | JSONException | ParseException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -159,22 +159,49 @@ public class FileGeneratorController {
         return true;
     }
 
-    private void createCourseJSONSettings(String location) throws IOException, JSONException, ParseException {
-        System.out.println(location);
+    private void createCourseJSONSettings(Candidate[] candidates, String location)
+            throws IOException, JSONException, ParseException {
 
         File courseSettingsFile = new File(location + "/.workflow.json");
         courseSettingsFile.createNewFile();
-
-        // Calendar cal = Calendar.getInstance();
-        // cal.setTime(new Date());
-        // cal.add(Calendar.DATE, 2);
-        // Date deadline = cal.getTime();
 
         LocalDate date = LocalDate.parse(reverseDate(this.courseDate));
         LocalDate deadline = date.plusDays(2);
         LocalDate created = LocalDate.now();
 
         JSONObject fileSettings = new JSONObject();
+        JSONObject documents = new JSONObject();
+
+        JSONArray gen = new JSONArray();
+        JSONArray cand = new JSONArray();
+
+        for (String s : getRequiredGeneralFiles()) {
+            gen.put(new JSONObject().put("name", s).put("inProgress", "false").put("written", "false").put("checked",
+                    "false"));
+        }
+
+        for (Candidate c : candidates) {
+            JSONArray candidateFiles = new JSONArray();
+
+            for (String s : getRequiredCandidateFiles()) {
+                candidateFiles.put(new JSONObject().put("name", s).put("inProgress",
+                        "false")
+                        .put("written", "false")
+                        .put("checked", "false").put("signedOff", "false").put("noAttend",
+                                "false"));
+            }
+            JSONObject candidateInfo = new JSONObject();
+            candidateInfo.put("name", c.getName()).put("inProgress",
+                    "false")
+                    .put("written", "false")
+                    .put("checked", "false").put("signedOff", "false").put("noAttend",
+                            "false")
+                    .put("candidateFiles", candidateFiles);
+            cand.put(candidateInfo);
+        }
+
+        documents.put("general", gen);
+        documents.put("candidate", cand);
 
         fileSettings.put("tag", "courses");
         fileSettings.put("name", courseType);
@@ -186,6 +213,7 @@ public class FileGeneratorController {
         fileSettings.put("date", date);
         fileSettings.put("deadline", deadline);
         fileSettings.put("path", courseSettingsFile.getAbsolutePath());
+        fileSettings.put("files", documents);
 
         Utils.writeJSON(fileSettings, courseSettingsFile.getAbsolutePath());
 

@@ -3,6 +3,7 @@ package com.filecreatorapi.api;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import org.json.JSONObject;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -37,4 +38,11 @@ public class WorkflowController {
             @RequestParam("coursePath") String coursePath) throws IOException {
         WorkflowUtils.updateAssignee(username, coursePath);
     }
+
+    @CrossOrigin
+    @RequestMapping(method = RequestMethod.GET, path = "/documents")
+    public String getDocuments(@RequestParam("path") String path) {
+        return WorkflowUtils.getDocuments(path).toString();
+    }
+
 }
