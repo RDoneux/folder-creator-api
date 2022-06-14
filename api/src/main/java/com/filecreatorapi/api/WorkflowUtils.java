@@ -1,5 +1,6 @@
 package com.filecreatorapi.api;
 
+import java.awt.Desktop;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -80,8 +81,113 @@ public class WorkflowUtils {
         Utils.writeJSON(courseSettings, coursePath);
     }
 
+    public static void updateDocumentWorkflow(String coursePath, String type, String candidate, String fileName,
+            String progressType, String checked) throws IOException {
+        JSONObject courseSettings = Utils.loadJSONObject(coursePath);
+        if (type.equals("general")) {
+            JSONArray target = courseSettings.getJSONObject("files").getJSONArray(type);
+            for (int i = 0; i < target.length(); i++) {
+                JSONObject documentFile = target.getJSONObject(i);
+                if (documentFile.get("name").equals(fileName)) {
+                    switch (progressType) {
+                        case "checked":
+                            documentFile.put("checked", checked);
+                            if (checked.equals("false")) {
+                                break;
+                            }
+                        case "written":
+                            documentFile.put("written", checked);
+                            if (checked.equals("false")) {
+                                break;
+                            }
+                        case "inProgress":
+                            documentFile.put("inProgress", checked);
+                            if (checked.equals("false")) {
+                                break;
+                            }
+                    }
+                    // for (String pt : progressType) {
+                    // documentFile.remove(pt);
+                    // documentFile.put(pt, checked);
+                    // }
+                }
+            }
+        } else if (type.equals("candidate")) {
+            JSONArray target = courseSettings.getJSONObject("files").getJSONArray(type);
+            for (int i = 0; i < target.length(); i++) {
+                JSONObject cand = target.getJSONObject(i);
+                if (cand.get("name").equals(candidate)) {
+                    target = courseSettings.getJSONObject("files").getJSONArray(type).getJSONObject(i)
+                            .getJSONArray("candidateFiles");
+                }
+            }
+            for (int i = 0; i < target.length(); i++) {
+                JSONObject documentFile = target.getJSONObject(i);
+                if (documentFile.get("name").equals(fileName)) {
+                    switch (progressType) {
+                        case "checked":
+                            documentFile.put("checked", checked);
+                            if (checked.equals("false")) {
+                                break;
+                            }
+                        case "written":
+                            documentFile.put("written", checked);
+                            if (checked.equals("false")) {
+                                break;
+                            }
+                        case "inProgress":
+                            documentFile.put("inProgress", checked);
+                            if (checked.equals("false")) {
+                                break;
+                            }
+                    }
+                }
+            }
+        }
+        Utils.writeJSON(courseSettings, coursePath);
+    }
+
+    public static void updateDocumentWorkFlowCandidate(String coursePath, String candidate, String inProgress,
+            String written, String checked) throws IOException {
+        JSONObject courseSettings = Utils.loadJSONObject(coursePath);
+        JSONArray target = courseSettings.getJSONObject("files").getJSONArray("candidate");
+        for (int i = 0; i < target.length(); i++) {
+            JSONObject cand = target.getJSONObject(i);
+            if (cand.get("name").equals(candidate)) {
+                cand.put("inProgress", inProgress);
+                cand.put("written", written);
+                cand.put("checked", checked);
+            }
+        }
+        Utils.writeJSON(courseSettings, coursePath);
+    }
+
     public static JSONObject getDocuments(String path) {
         return Utils.loadJSONObject(path);
+    }
+
+    public static void openFile(String fileName, String candidateName, String filePath) throws IOException {
+        File base = new File(filePath).getParentFile();
+
+        if (candidateName.isEmpty()) {
+            File target = new File(base.getAbsolutePath() + Utils.fileSeparator() + fileName + " .docx");
+            if (target.exists()) {
+                Desktop.getDesktop().open(target);
+            } else {
+                System.out
+                        .println("Could not open file at '" + target.getAbsolutePath() + "' because it doesn't exist");
+            }
+        } else {
+            File target = new File(base.getAbsolutePath() + Utils.fileSeparator() + candidateName
+                    + Utils.fileSeparator() + candidateName + " - " + fileName + " .docx");
+            if (target.exists()) {
+                Desktop.getDesktop().open(target);
+            } else {
+                System.out
+                        .println("Could not open file at '" + target.getAbsolutePath() + "' because it doesn't exist");
+            }
+        }
+
     }
 
 }

@@ -3,6 +3,7 @@ package com.filecreatorapi.api;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,6 +44,31 @@ public class WorkflowController {
     @RequestMapping(method = RequestMethod.GET, path = "/documents")
     public String getDocuments(@RequestParam("path") String path) {
         return WorkflowUtils.getDocuments(path).toString();
+    }
+
+    @CrossOrigin
+    @RequestMapping(method = RequestMethod.POST, path = "/updateDocumentWorkflow")
+    public void updateDocumentWokflow(@RequestParam("path") String coursePath, @RequestParam("type") String type,
+            @RequestParam("candidate") String candidate, @RequestParam("fileName") String fileName,
+            @RequestParam("progressType") String progressType, @RequestParam("checked") String checked)
+            throws IOException {
+        WorkflowUtils.updateDocumentWorkflow(coursePath, type, candidate, fileName,
+                progressType, checked);
+    }
+
+    @CrossOrigin
+    @RequestMapping(method = RequestMethod.POST, path = "/updateDocumentWorkFlowCandidate")
+    public void updateDocumentWorkFlowCandidate(@RequestParam("path") String coursePath,
+            @RequestParam("candidate") String candidate, @RequestParam("inProgress") String inProgress,
+            @RequestParam("written") String written, @RequestParam("checked") String checked) throws IOException {
+        WorkflowUtils.updateDocumentWorkFlowCandidate(coursePath, candidate, inProgress, written, checked);
+    }
+
+    @CrossOrigin
+    @RequestMapping(method = RequestMethod.POST, path = "/openFile")
+    public void openFile(@RequestParam("fileName") String fileName, @RequestParam("candidate") String candidate,
+            @RequestParam("coursePath") String coursePath) throws IOException {
+        WorkflowUtils.openFile(fileName, candidate, coursePath);
     }
 
 }
