@@ -190,4 +190,10 @@ public class WorkflowUtils {
 
     }
 
+    public static void updatePriority(String priority, String coursePath) throws IOException {
+        JSONObject courseSettings = Utils.loadJSONObject(coursePath);
+        courseSettings.put("priority", priority);
+        Utils.writeJSON(courseSettings, coursePath);
+    }
+
 }
