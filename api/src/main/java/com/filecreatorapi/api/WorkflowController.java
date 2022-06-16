@@ -3,6 +3,8 @@ package com.filecreatorapi.api;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import javax.annotation.security.RolesAllowed;
+
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -74,6 +76,19 @@ public class WorkflowController {
     public void updatePriority(@RequestParam("priority") String priority,
             @RequestParam("coursePath") String coursePath) throws IOException {
         WorkflowUtils.updatePriority(priority, coursePath);
+    }
+
+    @CrossOrigin
+    @RequestMapping(method = RequestMethod.POST, path = "/updateDescription")
+    public void updateDescription(@RequestParam("coursePath") String coursePath,
+            @RequestParam("textContent") String textContent) throws IOException {
+        WorkflowUtils.updateDescription(coursePath, textContent);
+    }
+
+    @CrossOrigin
+    @RequestMapping(method = RequestMethod.POST, path = "/updateDate")
+    public void updateDate(@RequestParam("date") String date, @RequestParam("path") String path) throws IOException {
+        WorkflowUtils.updateDate(date, path);
     }
 
 }

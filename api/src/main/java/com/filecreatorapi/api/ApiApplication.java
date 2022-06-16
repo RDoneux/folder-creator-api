@@ -10,12 +10,9 @@ public class ApiApplication {
 
 	public static void main(String[] args) {
 		Utils.loadSettings();
-		// SpringApplication.run(ApiApplication.class);
-
+		// SpringApplication.run(ApiApplication.class);	
 		SpringApplicationBuilder builder = new SpringApplicationBuilder(ApiApplication.class);
-
 		builder.headless(false);
-
 		ConfigurableApplicationContext context = builder.run(args);
 	}
 

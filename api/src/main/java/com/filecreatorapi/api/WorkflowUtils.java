@@ -196,4 +196,17 @@ public class WorkflowUtils {
         Utils.writeJSON(courseSettings, coursePath);
     }
 
+    public static void updateDescription(String coursePath, String content) throws IOException {
+        JSONObject courseSettings = Utils.loadJSONObject(coursePath);
+        courseSettings.put("description", content);
+        Utils.writeJSON(courseSettings, coursePath);
+    }
+
+    public static void updateDate(String date, String path) throws IOException {
+        JSONObject courseSettings = Utils.loadJSONObject(path);
+        courseSettings.put("deadline", date);
+        Utils.writeJSON(courseSettings, path);
+
+    }
+
 }
