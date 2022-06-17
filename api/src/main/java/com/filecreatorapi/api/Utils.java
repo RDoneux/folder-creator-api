@@ -58,6 +58,32 @@ public class Utils {
         }
     }
 
+    public static JSONArray loadJSONArray(String path) {
+        File targetFile = new File(path);
+        if (targetFile.exists()) {
+            System.out.println("loading JSONObject from: '" + path + "'");
+        } else {
+            System.out.println("could not create settings file");
+        }
+
+        Scanner scan;
+        String JSONString = "";
+        try {
+            scan = new Scanner(new FileInputStream(targetFile));
+
+            while (scan.hasNext()) {
+                JSONString += scan.nextLine();
+            }
+
+            return new JSONArray(JSONString);
+
+        } catch (FileNotFoundException e) {
+            System.out.println("could not read targetFile file at '" + path + "'");
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     public static JSONObject loadSettings() {
 
         if (!SETTINGS_FILE.exists()) {
@@ -359,6 +385,12 @@ public class Utils {
         writer.close();
     }
 
+    public static void writeJSON(JSONArray jsonObject, String fileLocation) throws IOException {
+        FileWriter writer = new FileWriter(fileLocation);
+        writer.write(jsonObject.toString());
+        writer.close();
+    }
+
     public static String convertToJSONString(String input) {
         String output[] = input.split(" ");
         StringBuilder build = new StringBuilder();
@@ -453,6 +485,7 @@ public class Utils {
         String format = formatter.format(date);
         return format;
     }
+
     public static String generateReadableDateWithTime(Date date) {
         SimpleDateFormat formatter = new SimpleDateFormat("MM-dd-yyyy|HH:mm");
         String format = formatter.format(date);
