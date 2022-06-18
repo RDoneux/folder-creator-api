@@ -16,6 +16,11 @@ public class WorkflowUtils {
 
     public static JSONObject getCourses() throws FileNotFoundException {
 
+        if (FileGeneratorController.BASE_URL.isEmpty()) {
+            FileGeneratorController.BASE_URL = Utils.loadSettings().getJSONObject("outputLocation")
+                    .getString("location");
+        }
+        System.out.println("BASE_URL: " + FileGeneratorController.BASE_URL);
         File file = new File(FileGeneratorController.BASE_URL);
         JSONArray files = new JSONArray();
 
@@ -30,6 +35,7 @@ public class WorkflowUtils {
             files.put(new JSONObject(builder.toString()));
 
         }
+        System.out.println(files);
         return new JSONObject().put("files", files);
     }
 
@@ -54,7 +60,7 @@ public class WorkflowUtils {
 
     private static File getWorkflowSettings(File directory) {
         for (File f : directory.listFiles()) {
-            if (f.isHidden() && f.getName().equals(".workflow.json")) {
+            if (f.getName().equals(".workflow.json")) {
                 return f;
             }
         }

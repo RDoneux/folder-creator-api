@@ -2,6 +2,10 @@ package com.filecreatorapi.api;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.LinkOption;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -29,9 +33,8 @@ public class FileGeneratorController {
 
     private String courseDate;
     private String courseType;
-    private static String MASTER_FOLDER = "courses";
-    static String BASE_URL = Utils.fileSeparator() + "home" + Utils.fileSeparator() + "robert" + Utils.fileSeparator()
-            + "Desktop" + Utils.fileSeparator() + MASTER_FOLDER;
+    public static String MASTER_FOLDER = Utils.fileSeparator() + "courses";
+    static String BASE_URL = "";
     public String baseFilePath;
     private JSONObject settings;
 
@@ -49,13 +52,6 @@ public class FileGeneratorController {
         response.put("response", "Success");
 
         return response.toString();
-
-        // HashMap<String, String> map = new HashMap<>();
-        // map.put("response", "Success");
-        // return map;
-
-        // return new ResponseEntity<String>("Course Successfully Created",
-        // HttpStatus.OK);
 
     }
 
@@ -101,8 +97,13 @@ public class FileGeneratorController {
 
     private boolean createFolderStructure(Candidate[] candidates) {
 
+        if (FileGeneratorController.BASE_URL.isEmpty()) {
+            FileGeneratorController.BASE_URL = Utils.loadSettings().getJSONObject("outputLocation")
+                    .getString("location");
+        }
+
         baseFilePath = BASE_URL + fileSeparator() + courseDate.split("-")[2] + fileSeparator()
-                + getMonth(courseDate.split("-")[1]) + fileSeparator() + Utils.convertFromJSONString(courseType) + " | "
+                + getMonth(courseDate.split("-")[1]) + fileSeparator() + Utils.convertFromJSONString(courseType) + "-"
                 + courseDate;
 
         File baseFile = new File(baseFilePath);
@@ -162,8 +163,13 @@ public class FileGeneratorController {
     private void createCourseJSONSettings(Candidate[] candidates, String location)
             throws IOException, JSONException, ParseException {
 
-        File courseSettingsFile = new File(location + "/.workflow.json");
+        File courseSettingsFile = new File(location, ".workflow.json");
+
+
         courseSettingsFile.createNewFile();
+        // set the file to hidden on windows machines
+        // Path path = Paths.get(courseSettingsFile.getPath());
+        // Files.setAttribute(path, "dos:hidden", Boolean.TRUE, LinkOption.NOFOLLOW_LINKS);
 
         LocalDate date = LocalDate.parse(reverseDate(this.courseDate));
         LocalDate deadline = date.plusDays(2);
@@ -298,8 +304,14 @@ public class FileGeneratorController {
     }
 
     private void copyFile(String src, String dest, String newFileName) throws JSONException, IOException {
-        FileUtils.copyFile(new File(getCourseFileLocation(src)),
-                new File(baseFilePath + fileSeparator() + dest + fileSeparator(), newFileName + ".docx"));
+        File source = new File(Utils.convertToPlatformIndependantFilePath(getCourseFileLocation(src)));
+        System.out.println("dest   " + dest + " : " + newFileName);
+        System.out.println(source.getParent() + Utils.fileSeparator() + source.getName());
+        System.out.println(Utils.convertToPlatformIndependantFilePath(
+                baseFilePath + Utils.fileSeparator() + dest + Utils.fileSeparator() + newFileName + ".docx"));
+        FileUtils.copyFile(new File(source.getParent() + Utils.fileSeparator() + source.getName()),
+                new File(Utils.convertToPlatformIndependantFilePath(
+                        baseFilePath + Utils.fileSeparator() + dest + Utils.fileSeparator() + newFileName + ".docx")));
     }
 
     private String getCourseFileLocation(String src) {

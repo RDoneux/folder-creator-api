@@ -10,17 +10,25 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Scanner;
 
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.plaf.FileChooserUI;
+
 import com.fasterxml.jackson.databind.PropertyNamingStrategies.LowerCaseStrategy;
+import java.awt.GraphicsEnvironment;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class Utils {
 
-    private static File SETTINGS_FILE = new File("api/api/src/main/FileGeneratorSettings.json");
+    private static File SETTINGS_FILE = new File(System.getProperty("user.dir") + Utils.fileSeparator() + "support"
+            + Utils.fileSeparator() + "FileGeneratorSettings.json");
 
-    public static String USERS_FILE_PATH = "api/api/src/main/users";
-    public static String CUSTOM_FILES_PATH = "api/api/src/main/customFiles/";
+    public static String USERS_FILE_PATH = System.getProperty("user.dir") + Utils.fileSeparator() + "support"
+            + Utils.fileSeparator() + "users";
+    public static String CUSTOM_FILES_PATH = System.getProperty("user.dir") + "support" + Utils.fileSeparator()
+            + "customFiles" + Utils.fileSeparator();
 
     public Candidate parseJsonInput(String input) {
 
@@ -304,39 +312,51 @@ public class Utils {
         JSONArray courseFileLocations = new JSONArray();
 
         courseFileLocations.put(new JSONObject().put("name", "issuesArisingForm").put("location",
-                "api/api/src/main/resources/templates/Issues Arising Form.docx")
+                System.getProperty("user.dir")
+                        + convertToPlatformIndependantFilePath("/support/templates/Issues Arising Form.docx"))
                 .put("display", "Issues Arising Form.docx").put("version", "no version information"));
         courseFileLocations.put(new JSONObject().put("name", "evaluationCollationForm").put("location",
-                "api/api/src/main/resources/templates/General - Evaluation Collation Form.docx")
+                System.getProperty("user.dir") + convertToPlatformIndependantFilePath(
+                        "/support/templates/General - Evaluation Collation Form.docx"))
                 .put("display", "Evaluation Collation Form.docx").put("version", "no version information"));
         courseFileLocations.put(new JSONObject().put("name", "attendanceSheet").put("location",
-                "api/api/src/main/resources/templates/Attendance Sheet.docx").put("display", "Attendance Sheet.docx")
+                System.getProperty("user.dir")
+                        + convertToPlatformIndependantFilePath("/support/templates/Attendance Sheet.docx"))
+                .put("display", "Attendance Sheet.docx")
                 .put("version", "no version information"));
         courseFileLocations.put(new JSONObject().put("name", "generalRecordSheet").put("location",
-                "api/api/src/main/resources/templates/General - Record Sheet.docx")
+                System.getProperty("user.dir")
+                        + convertToPlatformIndependantFilePath("/support/templates/General - Record Sheet.docx"))
                 .put("display", "Record Sheet.docx").put("version", "no version information"));
         courseFileLocations.put(new JSONObject().put("name", "interventionAssessmentPWP").put("location",
-                "api/api/src/main/resources/templates/General - Physical Intervention Records PWP.docx")
+                System.getProperty("user.dir") + convertToPlatformIndependantFilePath(
+                        "/support/templates/General - Physical Intervention Records PWP.docx"))
                 .put("display", "Physical Intervention Records PWP.docx").put("version", "no version information"));
         courseFileLocations.put(new JSONObject().put("name", "interventionAssessmentKS").put("location",
-                "api/api/src/main/resources/templates/General - Physical Intervention Records KS.docx")
+                System.getProperty("user.dir") + convertToPlatformIndependantFilePath(
+                        "/support/templates/General - Physical Intervention Records KS.docx"))
                 .put("display", "Physical Intervention Records KS.docx").put("version", "no version information"));
         courseFileLocations.put(new JSONObject().put("name", "interventionAssessmentPS").put("location",
-                "api/api/src/main/resources/templates/General - Physical Intervention Records PS.docx")
+                System.getProperty("user.dir") + convertToPlatformIndependantFilePath(
+                        "/support/templates/General - Physical Intervention Records PS.docx"))
                 .put("display", "Physical Intervention Records PS.docx").put("version", "no version information"));
         courseFileLocations.put(new JSONObject().put("name", "interventionAssessmentRPS").put("location",
-                "api/api/src/main/resources/templates/General - Physical Intervention Records RPS.docx")
+                System.getProperty("user.dir") + convertToPlatformIndependantFilePath(
+                        "/support/templates/General - Physical Intervention Records RPS.docx"))
                 .put("display", "Physical Intervention Records RPS.docx").put("version", "no version information"));
         courseFileLocations.put(new JSONObject().put("name", "recertificationPresentationAssessment").put("location",
-                "api/api/src/main/resources/templates/Re-certification - Presentation Feedback.docx")
+                System.getProperty("user.dir") + convertToPlatformIndependantFilePath(
+                        "/support/templates/Re-certification - Presentation Feedback.docx"))
                 .put("display", "Re-certification - Presentation Feedback.docx")
                 .put("version", "no version information"));
         courseFileLocations.put(new JSONObject().put("name", "assessmentDayPresentationAssessment").put("location",
-                "api/api/src/main/resources/templates/Assessment Day - Presentation Feedback.docx")
+                System.getProperty("user.dir") + convertToPlatformIndependantFilePath(
+                        "/support/templates/Assessment Day - Presentation Feedback.docx"))
                 .put("display", "Assessment Day - Presentation Feedback.docx")
                 .put("version", "no version information"));
         courseFileLocations.put(new JSONObject().put("name", "instructorPresentationAssessment").put("location",
-                "api/api/src/main/resources/templates/Instructor Course - Presentation Feedback.docx")
+                System.getProperty("user.dir") + convertToPlatformIndependantFilePath(
+                        "/support/templates/Instructor Course - Presentation Feedback.docx"))
                 .put("display", "Instructor Course - Presentation Feedback.docx")
                 .put("version", "no version information"));
 
@@ -368,9 +388,18 @@ public class Utils {
 
         settingsJSON.put("courseFileLocations", courseFileLocations);
         settingsJSON.put("courseRequirements", courses);
+        settingsJSON.put("outputLocation",
+                new JSONObject().put("location",
+                        System.getProperty("user.dir") + FileGeneratorController.MASTER_FOLDER));
+        FileGeneratorController.BASE_URL = settingsJSON.getJSONObject("outputLocation").getString("location");
 
         writeSettings(settingsJSON);
 
+    }
+
+    public static String convertToPlatformIndependantFilePath(String path) {
+        String toReturn = path.replace("\\\\", Utils.fileSeparator());
+        return toReturn.replace("/", Utils.fileSeparator());
     }
 
     private static void writeSettings(JSONObject settings) throws IOException {
@@ -407,12 +436,16 @@ public class Utils {
     }
 
     public static String convertFromJSONString(String input) {
-        String[] output = input.split("(?=\\p{Upper})");
+        String[] output = input.split("(?=p\\{Upper})");
 
         StringBuilder build = new StringBuilder();
         for (int i = 0; i < output.length; i++) {
             String word = output[i];
-            word = upperOrLowerCase("upper", word) + " ";
+            if (i + 1 == output.length) {
+                word = upperOrLowerCase("upper", word);
+            } else {
+                word = upperOrLowerCase("upper", word) + " ";
+            }
             build.append(word);
         }
         return build.toString();
@@ -490,6 +523,19 @@ public class Utils {
         SimpleDateFormat formatter = new SimpleDateFormat("MM-dd-yyyy|HH:mm");
         String format = formatter.format(date);
         return format;
+    }
+
+    public static JSONObject getOutputFile() {
+        JSONObject settings = loadJSONObject(SETTINGS_FILE.getAbsolutePath());
+        return settings.getJSONObject("outputLocation");
+    }
+
+    public static void editOutputFile(String path) throws IOException {
+        JSONObject settings = loadJSONObject(SETTINGS_FILE.getAbsolutePath());
+        settings.put("outputLocation",
+                new JSONObject().put("location",
+                        path + FileGeneratorController.MASTER_FOLDER));
+        writeJSON(settings, SETTINGS_FILE.getAbsolutePath());
     }
 
 }

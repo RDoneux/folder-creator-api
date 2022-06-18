@@ -82,4 +82,16 @@ public class SettingsController {
         Utils.addNewCourseProfile(name);
     }
 
+    @CrossOrigin
+    @RequestMapping(method = RequestMethod.GET, path="/getOutputFile")
+    public String getOutputFile() {
+        return Utils.getOutputFile().toString();
+    }
+
+    @CrossOrigin
+    @RequestMapping(method = RequestMethod.POST, path="/editOutputFile")
+    public void editOutputFile(@RequestParam("path") String path) throws IOException {
+        Utils.editOutputFile(path.replace("courses", ""));
+    }
+
 }
