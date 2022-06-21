@@ -64,7 +64,7 @@ public class FileGeneratorController {
         Candidate candidates[] = new Candidate[information.length()];
 
         courseDate = reverseDate(course.getString("date"));
-        courseType = Utils.convertToJSONString(course.getString("courseType"));
+        courseType = course.getString("courseType");
 
         for (int i = 0; i < information.length(); i++) {
             JSONObject targetCandidate = information.getJSONObject(i);
@@ -184,6 +184,7 @@ public class FileGeneratorController {
         for (String s : getRequiredGeneralFiles()) {
             gen.put(new JSONObject().put("name", s).put("inProgress", "false").put("written", "false").put("checked",
                     "false"));
+            System.out.println("getting general files: " + s);
         }
 
         for (Candidate c : candidates) {
@@ -195,6 +196,7 @@ public class FileGeneratorController {
                         .put("written", "false")
                         .put("checked", "false").put("signedOff", "false").put("noAttend",
                                 "false"));
+                System.out.println("candidate files: " + c + " : " + s);
             }
             JSONObject candidateInfo = new JSONObject();
             candidateInfo.put("name", c.getName()).put("inProgress",
@@ -204,6 +206,7 @@ public class FileGeneratorController {
                             "false")
                     .put("candidateFiles", candidateFiles);
             cand.put(candidateInfo);
+            System.out.println("candidate info: " + candidateInfo);
         }
 
         documents.put("general", gen);
@@ -220,6 +223,8 @@ public class FileGeneratorController {
         fileSettings.put("deadline", deadline);
         fileSettings.put("path", courseSettingsFile.getAbsolutePath());
         fileSettings.put("files", documents);
+
+        System.out.println("file settings: " + fileSettings);
 
         Utils.writeJSON(fileSettings, courseSettingsFile.getAbsolutePath());
 

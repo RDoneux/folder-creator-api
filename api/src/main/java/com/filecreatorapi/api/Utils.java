@@ -17,6 +17,7 @@ import javax.swing.plaf.FileChooserUI;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies.LowerCaseStrategy;
 import java.awt.GraphicsEnvironment;
 
+import org.apache.tomcat.util.json.JSONParserConstants;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -27,7 +28,8 @@ public class Utils {
 
     public static String USERS_FILE_PATH = System.getProperty("user.dir") + Utils.fileSeparator() + "support"
             + Utils.fileSeparator() + "users";
-    public static String CUSTOM_FILES_PATH = System.getProperty("user.dir") + "support" + Utils.fileSeparator()
+    public static String CUSTOM_FILES_PATH = System.getProperty("user.dir") + Utils.fileSeparator() + "support"
+            + Utils.fileSeparator()
             + "customFiles" + Utils.fileSeparator();
 
     public Candidate parseJsonInput(String input) {
@@ -159,6 +161,30 @@ public class Utils {
                     if (target.get("name").equals(key)) {
                         fileLocations.remove(i);
                         break;
+                    }
+                }
+                JSONArray courseRequirements = settings.getJSONArray("courseRequirements");
+                for (int i = 0; i < courseRequirements.length(); i++) {
+                    JSONObject course = courseRequirements.getJSONObject(i);
+                    JSONArray general = course.getJSONObject("files").getJSONArray("generalFiles");
+                    for (int j = 0; j < general.length(); j++) {
+                        JSONObject target = general.getJSONObject(j);
+                        System.out.println(Utils.convertFromJSONString(target.getString("name")).toLowerCase() + " : "
+                                + key.toLowerCase());
+                        if ((Utils.convertFromJSONString(target.getString("name")).toLowerCase()
+                                .equals(key.toLowerCase()))) {
+                            general.remove(j);
+                        }
+                    }
+
+                    JSONArray candidate = course.getJSONObject("files").getJSONArray("candidateFiles");
+                    for (int j = 0; j < candidate.length(); j++) {
+                        JSONObject target = candidate.getJSONObject(j);
+                        Utils.convertFromJSONString(target.getString("name").toLowerCase()).equals(key.toLowerCase());
+                        if ((Utils.convertFromJSONString(target.getString("name")).toLowerCase()
+                                .equals(key.toLowerCase()))) {
+                            candidate.remove(j);
+                        }
                     }
                 }
                 System.err.println("DOCUMENT setting with key: '" + key + "', could not be found");
@@ -311,80 +337,115 @@ public class Utils {
 
         JSONArray courseFileLocations = new JSONArray();
 
-        courseFileLocations.put(new JSONObject().put("name", "issuesArisingForm").put("location",
-                System.getProperty("user.dir")
-                        + convertToPlatformIndependantFilePath("/support/templates/Issues Arising Form.docx"))
-                .put("display", "Issues Arising Form.docx").put("version", "no version information"));
-        courseFileLocations.put(new JSONObject().put("name", "evaluationCollationForm").put("location",
-                System.getProperty("user.dir") + convertToPlatformIndependantFilePath(
-                        "/support/templates/General - Evaluation Collation Form.docx"))
-                .put("display", "Evaluation Collation Form.docx").put("version", "no version information"));
-        courseFileLocations.put(new JSONObject().put("name", "attendanceSheet").put("location",
-                System.getProperty("user.dir")
-                        + convertToPlatformIndependantFilePath("/support/templates/Attendance Sheet.docx"))
-                .put("display", "Attendance Sheet.docx")
-                .put("version", "no version information"));
-        courseFileLocations.put(new JSONObject().put("name", "generalRecordSheet").put("location",
-                System.getProperty("user.dir")
-                        + convertToPlatformIndependantFilePath("/support/templates/General - Record Sheet.docx"))
-                .put("display", "Record Sheet.docx").put("version", "no version information"));
-        courseFileLocations.put(new JSONObject().put("name", "interventionAssessmentPWP").put("location",
-                System.getProperty("user.dir") + convertToPlatformIndependantFilePath(
-                        "/support/templates/General - Physical Intervention Records PWP.docx"))
-                .put("display", "Physical Intervention Records PWP.docx").put("version", "no version information"));
-        courseFileLocations.put(new JSONObject().put("name", "interventionAssessmentKS").put("location",
-                System.getProperty("user.dir") + convertToPlatformIndependantFilePath(
-                        "/support/templates/General - Physical Intervention Records KS.docx"))
-                .put("display", "Physical Intervention Records KS.docx").put("version", "no version information"));
-        courseFileLocations.put(new JSONObject().put("name", "interventionAssessmentPS").put("location",
-                System.getProperty("user.dir") + convertToPlatformIndependantFilePath(
-                        "/support/templates/General - Physical Intervention Records PS.docx"))
-                .put("display", "Physical Intervention Records PS.docx").put("version", "no version information"));
-        courseFileLocations.put(new JSONObject().put("name", "interventionAssessmentRPS").put("location",
-                System.getProperty("user.dir") + convertToPlatformIndependantFilePath(
-                        "/support/templates/General - Physical Intervention Records RPS.docx"))
-                .put("display", "Physical Intervention Records RPS.docx").put("version", "no version information"));
-        courseFileLocations.put(new JSONObject().put("name", "recertificationPresentationAssessment").put("location",
-                System.getProperty("user.dir") + convertToPlatformIndependantFilePath(
-                        "/support/templates/Re-certification - Presentation Feedback.docx"))
-                .put("display", "Re-certification - Presentation Feedback.docx")
-                .put("version", "no version information"));
-        courseFileLocations.put(new JSONObject().put("name", "assessmentDayPresentationAssessment").put("location",
-                System.getProperty("user.dir") + convertToPlatformIndependantFilePath(
-                        "/support/templates/Assessment Day - Presentation Feedback.docx"))
-                .put("display", "Assessment Day - Presentation Feedback.docx")
-                .put("version", "no version information"));
-        courseFileLocations.put(new JSONObject().put("name", "instructorPresentationAssessment").put("location",
-                System.getProperty("user.dir") + convertToPlatformIndependantFilePath(
-                        "/support/templates/Instructor Course - Presentation Feedback.docx"))
-                .put("display", "Instructor Course - Presentation Feedback.docx")
-                .put("version", "no version information"));
+        // courseFileLocations.put(new JSONObject().put("name",
+        // "issuesArisingForm").put("location",
+        // System.getProperty("user.dir")
+        // + convertToPlatformIndependantFilePath("/support/templates/Issues Arising
+        // Form.docx"))
+        // .put("display", "Issues Arising Form.docx").put("version", "no version
+        // information"));
+        // courseFileLocations.put(new JSONObject().put("name",
+        // "evaluationCollationForm").put("location",
+        // System.getProperty("user.dir") + convertToPlatformIndependantFilePath(
+        // "/support/templates/General - Evaluation Collation Form.docx"))
+        // .put("display", "Evaluation Collation Form.docx").put("version", "no version
+        // information"));
+        // courseFileLocations.put(new JSONObject().put("name",
+        // "attendanceSheet").put("location",
+        // System.getProperty("user.dir")
+        // + convertToPlatformIndependantFilePath("/support/templates/Attendance
+        // Sheet.docx"))
+        // .put("display", "Attendance Sheet.docx")
+        // .put("version", "no version information"));
+        // courseFileLocations.put(new JSONObject().put("name",
+        // "generalRecordSheet").put("location",
+        // System.getProperty("user.dir")
+        // + convertToPlatformIndependantFilePath("/support/templates/General - Record
+        // Sheet.docx"))
+        // .put("display", "Record Sheet.docx").put("version", "no version
+        // information"));
+        // courseFileLocations.put(new JSONObject().put("name",
+        // "interventionAssessmentPWP").put("location",
+        // System.getProperty("user.dir") + convertToPlatformIndependantFilePath(
+        // "/support/templates/General - Physical Intervention Records PWP.docx"))
+        // .put("display", "Physical Intervention Records PWP.docx").put("version", "no
+        // version information"));
+        // courseFileLocations.put(new JSONObject().put("name",
+        // "interventionAssessmentKS").put("location",
+        // System.getProperty("user.dir") + convertToPlatformIndependantFilePath(
+        // "/support/templates/General - Physical Intervention Records KS.docx"))
+        // .put("display", "Physical Intervention Records KS.docx").put("version", "no
+        // version information"));
+        // courseFileLocations.put(new JSONObject().put("name",
+        // "interventionAssessmentPS").put("location",
+        // System.getProperty("user.dir") + convertToPlatformIndependantFilePath(
+        // "/support/templates/General - Physical Intervention Records PS.docx"))
+        // .put("display", "Physical Intervention Records PS.docx").put("version", "no
+        // version information"));
+        // courseFileLocations.put(new JSONObject().put("name",
+        // "interventionAssessmentRPS").put("location",
+        // System.getProperty("user.dir") + convertToPlatformIndependantFilePath(
+        // "/support/templates/General - Physical Intervention Records RPS.docx"))
+        // .put("display", "Physical Intervention Records RPS.docx").put("version", "no
+        // version information"));
+        // courseFileLocations.put(new JSONObject().put("name",
+        // "recertificationPresentationAssessment").put("location",
+        // System.getProperty("user.dir") + convertToPlatformIndependantFilePath(
+        // "/support/templates/Re-certification - Presentation Feedback.docx"))
+        // .put("display", "Re-certification - Presentation Feedback.docx")
+        // .put("version", "no version information"));
+        // courseFileLocations.put(new JSONObject().put("name",
+        // "assessmentDayPresentationAssessment").put("location",
+        // System.getProperty("user.dir") + convertToPlatformIndependantFilePath(
+        // "/support/templates/Assessment Day - Presentation Feedback.docx"))
+        // .put("display", "Assessment Day - Presentation Feedback.docx")
+        // .put("version", "no version information"));
+        // courseFileLocations.put(new JSONObject().put("name",
+        // "instructorPresentationAssessment").put("location",
+        // System.getProperty("user.dir") + convertToPlatformIndependantFilePath(
+        // "/support/templates/Instructor Course - Presentation Feedback.docx"))
+        // .put("display", "Instructor Course - Presentation Feedback.docx")
+        // .put("version", "no version information"));
 
         JSONObject filesRequired = new JSONObject();
         JSONArray candidateFiles = new JSONArray();
         JSONArray generalFiles = new JSONArray();
         JSONArray courses = new JSONArray();
 
-        generalFiles.put(new JSONObject().put("name", "issuesArisingForm").put("required", "true"));
-        generalFiles.put(new JSONObject().put("name", "attendanceSheet").put("required", "true"));
-        generalFiles.put(new JSONObject().put("name", "evaluationCollationForm").put("required", "true"));
+        // generalFiles.put(new JSONObject().put("name",
+        // "issuesArisingForm").put("required", "true"));
+        // generalFiles.put(new JSONObject().put("name",
+        // "attendanceSheet").put("required", "true"));
+        // generalFiles.put(new JSONObject().put("name",
+        // "evaluationCollationForm").put("required", "true"));
 
-        candidateFiles.put(new JSONObject().put("name", "generalRecordSheet").put("required", "true"));
-        candidateFiles.put(new JSONObject().put("name", "interventionAssessmentPWP").put("required", "true"));
-        candidateFiles.put(new JSONObject().put("name", "interventionAssessmentKS").put("required", "true"));
-        candidateFiles.put(new JSONObject().put("name", "interventionAssessmentPS").put("required", "true"));
-        candidateFiles.put(new JSONObject().put("name", "interventionAssessmentRPS").put("required", "true"));
-        candidateFiles
-                .put(new JSONObject().put("name", "recertificationPresentationAssessment").put("required", "true"));
-        candidateFiles.put(new JSONObject().put("name", "assessmentDayPresentationAssessment").put("required", "true"));
-        candidateFiles.put(new JSONObject().put("name", "instructorPresentationAssessment").put("required", "true"));
+        // candidateFiles.put(new JSONObject().put("name",
+        // "generalRecordSheet").put("required", "true"));
+        // candidateFiles.put(new JSONObject().put("name",
+        // "interventionAssessmentPWP").put("required", "true"));
+        // candidateFiles.put(new JSONObject().put("name",
+        // "interventionAssessmentKS").put("required", "true"));
+        // candidateFiles.put(new JSONObject().put("name",
+        // "interventionAssessmentPS").put("required", "true"));
+        // candidateFiles.put(new JSONObject().put("name",
+        // "interventionAssessmentRPS").put("required", "true"));
+        // candidateFiles
+        // .put(new JSONObject().put("name",
+        // "recertificationPresentationAssessment").put("required", "true"));
+        // candidateFiles.put(new JSONObject().put("name",
+        // "assessmentDayPresentationAssessment").put("required", "true"));
+        // candidateFiles.put(new JSONObject().put("name",
+        // "instructorPresentationAssessment").put("required", "true"));
 
         filesRequired.put("generalFiles", generalFiles);
         filesRequired.put("candidateFiles", candidateFiles);
 
-        courses.put(new JSONObject().put("name", "instructorCourse").put("files", filesRequired));
-        courses.put(new JSONObject().put("name", "introductoryAndFoundation").put("files", filesRequired));
-        courses.put(new JSONObject().put("name", "principalInstructorCourse").put("files", filesRequired));
+        // courses.put(new JSONObject().put("name", "instructorCourse").put("files",
+        // filesRequired));
+        // courses.put(new JSONObject().put("name",
+        // "introductoryAndFoundation").put("files", filesRequired));
+        // courses.put(new JSONObject().put("name",
+        // "principalInstructorCourse").put("files", filesRequired));
 
         settingsJSON.put("courseFileLocations", courseFileLocations);
         settingsJSON.put("courseRequirements", courses);
