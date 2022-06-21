@@ -301,9 +301,6 @@ public class FileGeneratorController {
             for (int i = 0; i < files.length(); i++) {
 
                 if (files.getJSONObject(i).get("name").equals(key)) {
-                    System.out.println("isTrue in general " + files.getJSONObject(i).get("name") + " : "
-                            + files.getJSONObject(i).getString("required"));
-
                     return isTrue(files.getJSONObject(i).getString("required"));
                 }
             }
@@ -311,26 +308,16 @@ public class FileGeneratorController {
             JSONArray files = settings.getJSONArray("courseRequirements").getJSONObject(getCourseTypeIndex(courseType))
                     .getJSONObject("files").getJSONArray("candidateFiles");
             for (int i = 0; i < files.length(); i++) {
-                System.out.println("isTrue in course " + files.getJSONObject(i).get("name") + " : "
-                        + files.getJSONObject(i).getString("required"));
-
                 if (files.getJSONObject(i).get("name").equals(key)) {
-
                     return isTrue(files.getJSONObject(i).getString("required"));
-
                 }
             }
         }
-
         return false;
     }
 
     private void copyFile(String src, String dest, String newFileName) throws JSONException, IOException {
         File source = new File(Utils.convertToPlatformIndependantFilePath(getCourseFileLocation(src)));
-        System.out.println("dest   " + dest + " : " + newFileName);
-        System.out.println(source.getParent() + Utils.fileSeparator() + source.getName());
-        System.out.println(Utils.convertToPlatformIndependantFilePath(
-                baseFilePath + Utils.fileSeparator() + dest + Utils.fileSeparator() + newFileName + ".docx"));
         FileUtils.copyFile(new File(source.getParent() + Utils.fileSeparator() + source.getName()),
                 new File(Utils.convertToPlatformIndependantFilePath(
                         baseFilePath + Utils.fileSeparator() + dest + Utils.fileSeparator() + newFileName + ".docx")));
@@ -357,24 +344,7 @@ public class FileGeneratorController {
         return -1;
     }
 
-    // private String trimJSONKey(String key) {
-    // return key.substring(1, key.length() - 1);
-    // }
-
     private boolean isTrue(String value) {
         return value.equals("true") || value.equals("True");
     }
-
-    // private int getDay() {
-    // return Integer.valueOf(this.courseDate.split("-")[0]);
-    // }
-
-    // private int getMonth() {
-    // return Integer.valueOf(this.courseDate.split("-")[1]);
-    // }
-
-    // private int getYear() {
-    // return Integer.valueOf(this.courseDate.split("-")[2]);
-    // }
-
 }
