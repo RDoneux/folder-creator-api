@@ -133,7 +133,7 @@ public class Utils {
         JSONArray fileLocations = settings.getJSONArray("courseFileLocations");
         fileLocations.put(
                 new JSONObject().put("display", key + ".docx").put("location", path)
-                        .put("name", convertToJSONString(key))
+                        .put("name", key)
                         .put("version",
                                 getVersion(fileName)));
 
@@ -143,8 +143,8 @@ public class Utils {
             JSONArray general = course.getJSONArray("generalFiles");
             JSONArray candidate = course.getJSONArray("candidateFiles");
 
-            general.put(new JSONObject().put("name", convertToJSONString(key)).put("required", "true"));
-            candidate.put(new JSONObject().put("name", convertToJSONString(key)).put("required", "true"));
+            general.put(new JSONObject().put("name", key).put("required", "true"));
+            candidate.put(new JSONObject().put("name", key).put("required", "true"));
         }
         writeSettings(settings);
     }

@@ -176,21 +176,40 @@ public class WorkflowUtils {
         File base = new File(filePath).getParentFile();
 
         if (candidateName.isEmpty()) {
-            File target = new File(base.getAbsolutePath() + Utils.fileSeparator() + fileName + " .docx");
+            File target = new File(base.getAbsolutePath() + Utils.fileSeparator() + fileName + ".docx");
             if (target.exists()) {
                 Desktop.getDesktop().open(target);
             } else {
                 System.out
-                        .println("Could not open file at '" + target.getAbsolutePath() + "' because it doesn't exist");
+                        .println("Could not open file at '" + target.getAbsolutePath()
+                                + "' because it doesn't exist. Attempting alternative format...");
+                target = new File(base.getAbsolutePath() + Utils.fileSeparator() + fileName + " .docx");
+                if (target.exists()) {
+                    Desktop.getDesktop().open(target);
+                } else {
+                    System.out
+                            .println("Could not open file at '" + target.getAbsolutePath()
+                                    + "' because it doesn't exist");
+                }
             }
         } else {
             File target = new File(base.getAbsolutePath() + Utils.fileSeparator() + candidateName
-                    + Utils.fileSeparator() + candidateName + " - " + fileName + " .docx");
+                    + Utils.fileSeparator() + candidateName + " - " + fileName + ".docx");
             if (target.exists()) {
                 Desktop.getDesktop().open(target);
             } else {
                 System.out
-                        .println("Could not open file at '" + target.getAbsolutePath() + "' because it doesn't exist");
+                        .println("Could not open file at '" + target.getAbsolutePath()
+                                + "' because it doesn't exist. Attempting alternative format...");
+                target = new File(base.getAbsolutePath() + Utils.fileSeparator() + candidateName
+                        + Utils.fileSeparator() + candidateName + " - " + fileName + " .docx");
+                if (target.exists()) {
+                    Desktop.getDesktop().open(target);
+                } else {
+                    System.out
+                            .println("Could not open file at '" + target.getAbsolutePath()
+                                    + "' because it doesn't exist");
+                }
             }
         }
 
