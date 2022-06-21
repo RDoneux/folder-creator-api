@@ -165,11 +165,11 @@ public class FileGeneratorController {
 
         File courseSettingsFile = new File(location, ".workflow.json");
 
-
         courseSettingsFile.createNewFile();
         // set the file to hidden on windows machines
         // Path path = Paths.get(courseSettingsFile.getPath());
-        // Files.setAttribute(path, "dos:hidden", Boolean.TRUE, LinkOption.NOFOLLOW_LINKS);
+        // Files.setAttribute(path, "dos:hidden", Boolean.TRUE,
+        // LinkOption.NOFOLLOW_LINKS);
 
         LocalDate date = LocalDate.parse(reverseDate(this.courseDate));
         LocalDate deadline = date.plusDays(2);
@@ -268,7 +268,7 @@ public class FileGeneratorController {
         ArrayList<String> response = new ArrayList<>();
         for (int i = 0; i < reference.length(); i++) {
             String stringToReturn = reference.getJSONObject(i).getString("name");
-            if (evaluateFormSetting(stringToReturn)) {
+            if (evaluateFormSetting(stringToReturn, "general")) {
                 response.add(stringToReturn);
             }
         }
@@ -281,30 +281,47 @@ public class FileGeneratorController {
         ArrayList<String> response = new ArrayList<>();
         for (int i = 0; i < reference.length(); i++) {
             String stringToReturn = reference.getJSONObject(i).getString("name");
-            if (evaluateFormSetting(stringToReturn)) {
+            if (evaluateFormSetting(stringToReturn, "candidate")) {
                 response.add(stringToReturn);
             }
         }
         return response;
     }
 
-    private boolean evaluateFormSetting(String key) {
+    private boolean evaluateFormSetting(String key, String type) {
 
-        JSONArray files = settings.getJSONArray("courseRequirements").getJSONObject(getCourseTypeIndex(courseType))
-                .getJSONObject("files").getJSONArray("generalFiles");
-        for (int i = 0; i < files.length(); i++) {
-            System.out.println(files.getJSONObject(i).get("name") + " : " + key);
-            if (files.getJSONObject(i).get("name").equals(key)) {
-                return isTrue(files.getJSONObject(i).getString("required"));
+        if (!(type.toLowerCase().equals("candidate") || type.toLowerCase().equals("general"))) {
+            throw new IllegalArgumentException(
+                    "Type not recognised. '" + type + "' must be either 'candidate' or 'general'");
+        }
+
+        if (type.equals("general")) {
+            JSONArray files = settings.getJSONArray("courseRequirements").getJSONObject(getCourseTypeIndex(courseType))
+                    .getJSONObject("files").getJSONArray("generalFiles");
+            for (int i = 0; i < files.length(); i++) {
+
+                if (files.getJSONObject(i).get("name").equals(key)) {
+                    System.out.println("isTrue in general " + files.getJSONObject(i).get("name") + " : "
+                            + files.getJSONObject(i).getString("required"));
+
+                    return isTrue(files.getJSONObject(i).getString("required"));
+                }
+            }
+        } else if (type.equals("candidate")) {
+            JSONArray files = settings.getJSONArray("courseRequirements").getJSONObject(getCourseTypeIndex(courseType))
+                    .getJSONObject("files").getJSONArray("candidateFiles");
+            for (int i = 0; i < files.length(); i++) {
+                System.out.println("isTrue in course " + files.getJSONObject(i).get("name") + " : "
+                        + files.getJSONObject(i).getString("required"));
+
+                if (files.getJSONObject(i).get("name").equals(key)) {
+
+                    return isTrue(files.getJSONObject(i).getString("required"));
+
+                }
             }
         }
-        files = settings.getJSONArray("courseRequirements").getJSONObject(getCourseTypeIndex(courseType))
-                .getJSONObject("files").getJSONArray("candidateFiles");
-        for (int i = 0; i < files.length(); i++) {
-            if (files.getJSONObject(i).get("name").equals(key)) {
-                return isTrue(files.getJSONObject(i).getString("required"));
-            }
-        }
+
         return false;
     }
 
