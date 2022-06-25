@@ -43,10 +43,10 @@ launch4j {
     // outfile = "api.exe"
 	// chdir="."
 	// priority="normal"
-	// downloadUrl="http://java.com/download"
-	// stayAlive="false"
+	downloadUrl="http://java.com/download"
+	stayAlive="false"
 	restartOnCrash="true"
-	// mutexName="api-backend"
+	mutexName="api-backend"
 	bundledJrePath="jdk-18.0.1.1"
   	mainClassName = 'com.filecreatorapi.api.ApiApplication'
     // icon = "${projectDir}/src/main/resources/images/icon.ico"
